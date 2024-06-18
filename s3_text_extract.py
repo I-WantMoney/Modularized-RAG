@@ -18,7 +18,7 @@ def get_text_from_s3_file(s3_uri:str):
             docs = loader.load()
             s3_raw_doc = docs
             
-        # まだ未完成
+        # zipの場合
         elif s3_uri.endswith(".zip"):
             s3_raw_doc = unzip_extract(s3_uri)
             
