@@ -1,3 +1,5 @@
+awscli
+boto3
 s3fs
 python-dotenv
 chromadb
