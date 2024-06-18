@@ -1,0 +1,8 @@
+s3fs
+python-dotenv
+chromadb
+streamlit
+langchain-core
+langchain-openai
+langchain
+langchain-community
