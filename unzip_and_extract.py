@@ -22,12 +22,6 @@ def unzip_extract(s3_uri:str):
     if not os.path.exists(temp_dir):
         os.makedirs(temp_dir)
     
-    # match = re.match(r's3://([^/]+)/(.+)', s3_uri)
-    # print(match)
-    # if match:
-    #     bucket_name = match.group(1)
-    #     zip_file_path = match.group(2)
-    
     # ドキュメントを格納するリストを初期化
     s3_raw_doc = []
     # ZIPファイルをバイナリモードで読み込む
