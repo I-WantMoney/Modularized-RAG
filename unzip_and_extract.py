@@ -6,9 +6,7 @@ import boto3
 from langchain_community.document_loaders import UnstructuredFileLoader
 
 
-# S3バケットとZIPファイルのパスを指定
-# bucket_name = "lxj-lambda-code-bucket"
-# zip_file_path = "fastapi-app/test_zipfile.zip"
+# S3の一時バケットのパスを指定
 temp_bucket = "lxj-temp-bucket"
 temp_folder = "temp_folder/"
 # S3ファイルシステムクライアントを作成
