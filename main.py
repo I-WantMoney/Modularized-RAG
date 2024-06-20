@@ -1,7 +1,7 @@
 import streamlit as st
 from button_setting import click_button
 from file_text_extract import get_text_from_file
-from s3_text_extract import get_text_from_s3_file
+from s3uri_text_extract import get_text_from_s3_file
 from langchain_core.messages import AIMessage, HumanMessage
 from chunk_setting import get_chunks
 from response_gen import get_response
@@ -10,8 +10,8 @@ from vectorDB_create import get_vectorstore
 def main():
     # app config
     st.set_page_config(page_title="Chat with your files", page_icon="🤖")
-    st.title("Upload files and chat with them")
-    st.info("Click the :red[_Process_] button before asking questions\n(:red[_Only the first time you upload_])")
+    st.title("Chat with your file(s).")
+    st.info("Click the :red[_Process_] button before asking questions (:red[_Only the first time you upload_])\n\n質問する前に:red[Process]ボタンを押してください (:red[最初アプロード時のみ押し必要])")
     
     # ボタンのクリック状態の初期化設定
     if "clicked" not in st.session_state:
@@ -38,10 +38,10 @@ def main():
         st.title("Settings")
         st.header("",divider="rainbow")
         
-        st.subheader("_Upload_ a :rainbow[FILE] :books:")
-        allfile = st.file_uploader("Upload your FILE here and click on '_Process_'",accept_multiple_files=True,type=["xlsx","docx","pdf"])
+        st.subheader("_Upload_ :rainbow[FILE(s)] :books:")
+        allfile = st.file_uploader("Upload your FILE(s) here and click on '_Process_'\n\nファイルのをアップして、[_Process_]ボタンをクリック",accept_multiple_files=True,type=["xlsx","docx","pdf"])
         
-        st.subheader("_Upload_ a :blue[S3 Bucket URI]\n(フォルダ、Zipファイル対応可能ですが、xlsxファイルのみ読込可能) :link:")
+        st.subheader("_Enter_ a :blue[S3 Bucket URI]:link:\n・xlsx、pdf、docxに対応可能。\n\n・上記ファイルの入っているフォルダ、Zipファイルも対応可能。 ")
         s3_uri = st.text_input("_S3 URI_")
         
         st.header("",divider="blue")
@@ -56,7 +56,7 @@ def main():
             file_existance = False
             file_raw_doc = []
             s3_raw_doc = []
-            st.info(":red[_Enter a URL or Upload some files_]")
+            st.info(":red[_Enter a S3 URI or Upload some files_]\n\n:red[_S3 URIの入力またはファイルのアップロードをしてください_]")
         
         else:
             # ローカルあり、s3なしの場合
