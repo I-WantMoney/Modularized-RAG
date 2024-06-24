@@ -5,6 +5,9 @@ from langchain_community.document_loaders import UnstructuredFileLoader
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
 def get_text_from_file(allfile):
+    temp_dir = "temp_uploadedfiles"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
     text_list = []
     # セッション内のfile_sと比較して、新しく追加されたファイルのみをテキストに変換
     temp_file = st.session_state.file_s

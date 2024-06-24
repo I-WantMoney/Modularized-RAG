@@ -12,10 +12,10 @@ def get_text_from_s3_file(s3_uri:str):
         if s3_uri.startswith("s3://"):
             print("We got a new S3 URI")
             
-            # 一時フォルダの作成
+            # 一時フォルダの指定
             temp_dir = "temp_uploadedfiles"
-            if not os.path.exists(temp_dir):
-                os.makedirs(temp_dir)
+            # if not os.path.exists(temp_dir):
+            #     os.makedirs(temp_dir)
             
             # uriがファイルの場合(今はxlsx、pdf、docxのみ対応可能)
             if s3_uri.endswith(".xlsx") or s3_uri.endswith(".pdf") or s3_uri.endswith(".docx"):
@@ -67,6 +67,8 @@ def get_text_from_s3_file(s3_uri:str):
                         docs += temp_doc
                         continue
         # s3のuriじゃない場合、空listにする            
+        elif (s3_uri is None) or (s3_uri == ""):
+            docs = []
         else:
             docs = []
             st.info(":red[_This is not an S3 uri, Please check_]")

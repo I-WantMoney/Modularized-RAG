@@ -6,8 +6,15 @@ from langchain_core.messages import AIMessage, HumanMessage
 from chunk_setting import get_chunks
 from response_gen import get_response
 from vectorDB_create import get_vectorstore
+import os
 
 def main():
+    # 一時フォルダの指定
+    temp_dir = "temp_uploadedfiles"
+    # 一時フォルダが存在しない場合のみ作成
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)   
+        
     # app config
     st.set_page_config(page_title="Chat with your files", page_icon="🤖")
     st.title("Chat with your file(s).")
@@ -41,17 +48,16 @@ def main():
         st.subheader("_Upload_ :rainbow[FILE(s)] :books:")
         allfile = st.file_uploader("Upload your FILE(s) here and click on '_Process_'\n\nファイルのをアップして、[_Process_]ボタンをクリック",accept_multiple_files=True,type=["xlsx","docx","pdf"])
         
-        st.subheader("_Enter_ a :blue[S3 Bucket URI]:link:\n・xlsx、pdf、docxに対応可能。\n\n・上記ファイルの入っているフォルダ、Zipファイルも対応可能。 ")
-        s3_uri = st.text_input("_S3 URI_")
+        st.subheader("_Enter_ a :blue[AWS S3 Bucket URI]:link:\n・xlsx、pdf、docxに対応可能。\n\n・上記ファイルの入っているフォルダ、Zipファイルも対応可能。 ")
+        s3_uri = st.text_input("_AWS S3 URI_")
         
         st.header("",divider="blue")
     
     # ボタン
     st.button("Process", on_click=click_button)
     # 最初アップロード時にクリックすれば十分
-    # クリックされたら、その状態をセッションに保存  
+    # クリックされたら、その状態をセッションに保存
     if st.session_state.clicked:
-        
         if allfile == [] and (s3_uri is None):
             file_existance = False
             file_raw_doc = []
@@ -98,11 +104,14 @@ def main():
             # ユーザーのクエリーで回答を生成
             user_query = st.chat_input("Try asking something about your files ")
         
-            if user_query is not None and user_query != "":
+            if (user_query is not None) and (user_query != "") and st.session_state.full_doc != []:
                 response = get_response(user_query)
                 # ユーザーの質問とAIの回答をセッションに入れる
                 st.session_state.chat_history.append(HumanMessage(content=user_query))
                 st.session_state.chat_history.append(AIMessage(content=response))
+                
+            if st.session_state.full_doc == []:
+                st.info(":red[_Nothing is upoaded_]\n\n:red[_何もアップロードされていないです_]")
 
             # 画面上で表示
             for message in st.session_state.chat_history:
