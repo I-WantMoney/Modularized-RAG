@@ -10,7 +10,6 @@ from dotenv import load_dotenv
 # from langchain_community.chat_models import BedrockChat
 # from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 # llm = BedrockChat(
-#     credentials_profile_name="https://047403811176.signin.aws.amazon.com/console",
 #     model_id="anthropic.claude-3-sonnet-20240229-v1:0",
 #     streaming=True,
 #     callbacks=[StreamingStdOutCallbackHandler()],
