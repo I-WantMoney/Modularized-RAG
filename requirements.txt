@@ -8,9 +8,7 @@ langchain-core==0.2.9
 langchain-openai==0.1.8
 langchain==0.2.5
 langchain-community==0.2.5
-
-# 以下のパケージはエラーで提示された場合のみインストールしてください
-# unstructured==0.14.6
-# unstructured[pdf]
-# unstructured[xlsx]
-# unstructured[docx]
+unstructured==0.14.6
+unstructured[pdf]
+unstructured[xlsx]
+unstructured[docx]
