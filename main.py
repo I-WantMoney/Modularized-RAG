@@ -100,27 +100,28 @@ def main():
             else:
                 print(st.session_state.full_doc)
                 print("no file added")
-            
-            # ユーザーのクエリーで回答を生成
-            user_query = st.chat_input("Try asking something about your files ")
-        
-            if (user_query is not None) and (user_query != "") and st.session_state.full_doc != []:
-                response = get_response(user_query)
-                # ユーザーの質問とAIの回答をセッションに入れる
-                st.session_state.chat_history.append(HumanMessage(content=user_query))
-                st.session_state.chat_history.append(AIMessage(content=response))
-                
+
             if st.session_state.full_doc == []:
                 st.info(":red[_Nothing is upoaded_]\n\n:red[_何もアップロードされていないです_]")
-
-            # 画面上で表示
-            for message in st.session_state.chat_history:
-                if isinstance(message,AIMessage):
-                    with st.chat_message("AI"):
-                        st.write(message.content)
-                elif isinstance(message,HumanMessage):
-                    with st.chat_message("Human"):
-                        st.write(message.content)
+            # ユーザーのクエリーで回答を生成
+            else:
+                user_query = st.chat_input("Try asking something about your files ")
+            
+                if (user_query is not None) and (user_query != "") and st.session_state.full_doc != []:
+                    response = get_response(user_query)
+                    # ユーザーの質問とAIの回答をセッションに入れる
+                    st.session_state.chat_history.append(HumanMessage(content=user_query))
+                    st.session_state.chat_history.append(AIMessage(content=response))
+                    
+    
+                # 画面上で表示
+                for message in st.session_state.chat_history:
+                    if isinstance(message,AIMessage):
+                        with st.chat_message("AI"):
+                            st.write(message.content)
+                    elif isinstance(message,HumanMessage):
+                        with st.chat_message("Human"):
+                            st.write(message.content)
                      
 if __name__ == "__main__":
     main()
