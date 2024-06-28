@@ -1,9 +1,9 @@
 from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores.chroma import Chroma
+from langchain_community.vectorstores.faiss import FAISS
 
 # ベクトルストア作成
 def get_vectorstore(chunks):
     embeddings = OpenAIEmbeddings()
-    vectorstore = Chroma.from_documents(documents=chunks,embedding=embeddings)
+    vectorstore = FAISS.from_documents(documents=chunks,embedding=embeddings)
     
     return vectorstore
