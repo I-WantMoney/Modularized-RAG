@@ -15,7 +15,7 @@ from dotenv import load_dotenv
 from langchain_aws import ChatBedrock
 
 LLM = ChatBedrock(
-    model_id="anthropic.claude-3-sonnet-20240229-v1:0",
+    model_id="anthropic.claude-3-5-sonnet-20240620-v1:0",
     region_name="us-east-1"
 )
 # -------------------------------------
