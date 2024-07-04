@@ -1,6 +1,7 @@
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.embeddings import BedrockEmbeddings
 from langchain_community.vectorstores.faiss import FAISS
+from langchain.schema import Document
 
 # ベクトルストア作成
 def get_vectorstore(chunks):
@@ -15,7 +16,7 @@ def get_vectorstore(chunks):
         region_name="us-east-1"
     )
     # -----------------------------
-    
+        
     vectorstore = FAISS.from_documents(documents=chunks,embedding=embeddings)
     
     return vectorstore

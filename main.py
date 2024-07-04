@@ -105,29 +105,45 @@ def main():
             if allfile == [] and (s3_uri is not None):
                 file_existance = True
                 file_raw_doc = []
-                s3_raw_doc = get_text_from_s3_file(s3_uri)
-            
+                try:
+                    s3_raw_doc = get_text_from_s3_file(s3_uri)
+                except:
+                    st.info(":red[_This is not an S3 uri, Please check_]")
+                    s3_raw_doc =[]
+
             #　ローカルあり、s3ありの場合
             if allfile != [] and (s3_uri is not None):
                 file_existance = True
-                s3_raw_doc = get_text_from_s3_file(s3_uri)
+                try:
+                    s3_raw_doc = get_text_from_s3_file(s3_uri)
+                except:
+                    st.info(":red[_This is not an S3 uri, Please check_]")
+                    s3_raw_doc =[]
+                    
                 file_raw_doc = get_text_from_file(allfile)
                 
-            full_doc_add = file_raw_doc + s3_raw_doc
-            st.session_state.full_doc += full_doc_add
-                
-            # print (f"Added doc: {full_doc_add}"
-            # 料金節約のために、追加のドキュメントがあるときのみ、Embeddingを執行
-            if full_doc_add != []:
-                # print("new file(s) added")
-                # print(f"Full doc: {st.session_state.full_doc}")
-                chunks = get_chunks(st.session_state.full_doc)
-                st.session_state.vector_store = get_vectorstore(chunks)
-            else:
-                print("no file added")
-                # print(f"Full doc: {st.session_state.full_doc}")
+        full_doc_add = file_raw_doc + s3_raw_doc
+        st.session_state.full_doc += full_doc_add 
+
+        if st.session_state.full_doc == []:
+            print("no file added")
+            # print(f"Full doc: {st.session_state.full_doc}")
+            st.info(":green[_Nothing is upoaded yet, but you can still chat with AI._]\n\n:green[_まだ何もアップされていないですが、AIとの会話が可能です_]")
             
-            if (user_query is not None) and (user_query != "") and st.session_state.full_doc != []:
+            if (user_query is not None) and (user_query != ""):
+                res = qa_get_response(user_query)
+                response = res.content
+                st.session_state.chat_history.append(HumanMessage(content=user_query))
+                st.session_state.chat_history.append(AIMessage(content=response))
+                    
+        # 料金節約のために、追加のドキュメントがあるときのみ、Embeddingを執行
+        if full_doc_add != [] or st.session_state.full_doc != []:
+            # print("new file(s) added")
+            # print(f"Full doc: {st.session_state.full_doc}")
+            chunks = get_chunks(st.session_state.full_doc)
+            st.session_state.vector_store = get_vectorstore(chunks)
+        
+            if (user_query is not None) and (user_query != ""):
                 res = rag_get_response(user_query)
                 response = res['answer']
                 
@@ -141,8 +157,6 @@ def main():
                 # st.session_state.chat_history = reshistory
                 st.session_state.chat_history.append(HumanMessage(content=user_query))
                 st.session_state.chat_history.append(AIMessage(content=response))
-
-
 
     # 画面上で会話履歴を表示
     for message in st.session_state.chat_history:
