@@ -12,12 +12,18 @@ import uuid
 # -------------------------------
 
 def main():
+    # 提示メッセージ初期化
+    show_info1 = False
+    show_info2 = False
+    show_info3 = False
+    show_info4 = False
+    show_info5 = False
     
     # 一時フォルダの指定
     temp_dir = "temp_uploadedfiles"
     # 一時フォルダが存在しない場合のみ作成
     if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)   
+        os.makedirs(temp_dir)
         
     # app config
     st.set_page_config(page_title="Chat with your files", page_icon="🤖")
@@ -26,7 +32,7 @@ def main():
     
     # ボタンのクリック状態の初期化設定
     if "clicked" not in st.session_state:
-        st.session_state.clicked = False   
+        st.session_state.clicked = False
     
     # セッション状態にセッションIDが存在しない場合、初期化
     if "session_id" not in st.session_state:
@@ -34,7 +40,7 @@ def main():
     
     # ファイル存在情況の初期化
     if "file_s" not in st.session_state:
-        st.session_state.file_s = [] 
+        st.session_state.file_s = []
         
     # S3ファイル存在情況の初期化
     if "uri_s" not in st.session_state: 
@@ -49,11 +55,11 @@ def main():
     # ----の初期化
     if "full_doc" not in st.session_state:
         st.session_state.full_doc = []
-        
+
     # ----の初期化
     if "vector_store" not in st.session_state:
         st.session_state.vector_store = None
-     
+    
     # サイドバーの設定
     with st.sidebar:
         
@@ -64,7 +70,7 @@ def main():
         st.info("Click the :red[_Process_] button before chatting with files (:red[_Only the first time you upload_])\n\n:red[ファイルに質問する]前に:red[Process]ボタンを押してください (:red[最初アプロード時のみ押し必要])")
         # ボタン
         st.button("Process", on_click=click_button)
-        # 最初アップロード時にクリックすれば十分    
+        # 最初アップロード時にクリックすれば十分
         
         st.subheader("_Upload_ :rainbow[FILE(s)] :books:")
         allfile = st.file_uploader("Upload your FILE(s) here and click on '_Process_'\n\nファイルのをアップして、[_Process_]ボタンをクリック",accept_multiple_files=True,type=["xlsx","docx","pdf"])
@@ -78,7 +84,9 @@ def main():
     
     # アプロードなしの場合 ----------------------------------
     if (allfile == [] and (s3_uri is None)) or st.session_state.clicked == False:
-        st.info(":green[_Nothing is upoaded yet, but you can still chat with AI._]\n\n:green[_まだ何もアップされていないですが、AIとの会話が可能です_]")
+        # 提示メッセージ1
+        show_info1 = True
+        
         if (user_query is not None) and (user_query != ""):
             res = qa_get_response(user_query)
             response = res.content
@@ -92,7 +100,9 @@ def main():
             file_existance = False
             file_raw_doc = []
             s3_raw_doc = []
-            st.info(":red[_Enter a S3 URI or Upload some files_]\n\n:red[_S3 URIの入力またはファイルのアップロードをしてください_]")
+            # 提示メッセージ2
+            show_info2 = True
+            
         
         else:
             # ローカルあり、s3なしの場合
@@ -108,7 +118,9 @@ def main():
                 try:
                     s3_raw_doc = get_text_from_s3_file(s3_uri)
                 except:
-                    st.info(":red[_This is not an S3 uri, Please check_]")
+                    # 提示メッセージ3
+                    show_info3 = True
+                    
                     s3_raw_doc =[]
 
             #　ローカルあり、s3ありの場合
@@ -117,18 +129,21 @@ def main():
                 try:
                     s3_raw_doc = get_text_from_s3_file(s3_uri)
                 except:
-                    st.info(":red[_This is not an S3 uri, Please check_]")
+                    # 提示メッセージ4
+                    show_info4 = True
+                    
                     s3_raw_doc =[]
                     
                 file_raw_doc = get_text_from_file(allfile)
                 
         full_doc_add = file_raw_doc + s3_raw_doc
-        st.session_state.full_doc += full_doc_add 
+        st.session_state.full_doc += full_doc_add
 
         if st.session_state.full_doc == []:
             print("no file added")
             # print(f"Full doc: {st.session_state.full_doc}")
-            st.info(":green[_Nothing is upoaded yet, but you can still chat with AI._]\n\n:green[_まだ何もアップされていないですが、AIとの会話が可能です_]")
+            # 提示メッセージ5
+            show_info5 = True
             
             if (user_query is not None) and (user_query != ""):
                 res = qa_get_response(user_query)
@@ -157,7 +172,7 @@ def main():
                 # st.session_state.chat_history = reshistory
                 st.session_state.chat_history.append(HumanMessage(content=user_query))
                 st.session_state.chat_history.append(AIMessage(content=response))
-
+    
     # 画面上で会話履歴を表示
     for message in st.session_state.chat_history:
         if isinstance(message,AIMessage):
@@ -168,5 +183,21 @@ def main():
                 st.write(message.content)
     print(f"session state: {st.session_state}")
     
+    # 最下部に提示メッセージを表示
+    if show_info1 == True:
+        st.info(":green[_Nothing is upoaded yet, but you can still chat with AI._]\n\n:green[_まだ何もアップされていないですが、AIとの会話が可能です_]")
+        
+    if show_info2 == True:
+        st.info(":red[_Enter a S3 URI or Upload some files_]\n\n:red[_S3 URIの入力またはファイルのアップロードをしてください_]")
+        
+    if show_info3 == True:
+        st.info(":red[_This is not an S3 uri, Please check_]")
+        
+    if show_info4 == True:
+        st.info(":red[_This is not an S3 uri, Please check_]")
+        
+    if show_info5 == True:
+        st.info(":green[_Nothing is upoaded yet, but you can still chat with AI._]\n\n:green[_まだ何もアップされていないですが、AIとの会話が可能です_]")
+        
 if __name__ == "__main__":
     main()

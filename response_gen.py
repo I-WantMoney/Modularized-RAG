@@ -26,7 +26,7 @@ LLM = ChatBedrock(
 # LLM = ChatOpenAI(model=llm_model) # カッコ内でapi-keyの指定、モデルの指定などができます。コードの先頭にdotenvを使ったので、自動的に.envファイルからapi-keyを取得します
 # # ------------------------------------
 
-# new --------------------------------
+# new ----------------------------------
 store = {}
 def get_session_history(session_id: str) -> BaseChatMessageHistory:
     if session_id not in store:
