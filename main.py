@@ -73,7 +73,7 @@ def main():
         # 最初アップロード時にクリックすれば十分
         
         st.subheader("_Upload_ :rainbow[FILE(s)] :books:")
-        allfile = st.file_uploader("Upload your FILE(s) here and click on '_Process_'\n\nファイルのをアップして、[_Process_]ボタンをクリック",accept_multiple_files=True,type=["xlsx","docx","pdf"])
+        allfile = st.file_uploader("Upload your FILE(s) here and click on '_Process_'\n\nファイルのをアップして、[_Process_]ボタンをクリック",accept_multiple_files=True,type=["xlsx","docx","pdf","pli"])
         
         st.subheader("_Enter_ a :blue[AWS S3 Bucket URI]:link:\n・xlsx、pdf、docxに対応可能。\n\n・上記ファイルの入っているフォルダ、Zipファイルも対応可能。 ")
         s3_uri = st.text_input(label="_AWS S3 URI_",value=st.session_state.uri_s)
@@ -101,8 +101,7 @@ def main():
             file_raw_doc = []
             s3_raw_doc = []
             # 提示メッセージ2
-            show_info2 = True
-            
+            show_info2 = True       
         
         else:
             # ローカルあり、s3なしの場合
